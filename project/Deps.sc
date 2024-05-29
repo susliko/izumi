@@ -150,7 +150,7 @@ object Izumi {
   // DON'T REMOVE, these variables are read from CI build (build.sh)
   final val scala212 = ScalaVersion("2.12.19")
   final val scala213 = ScalaVersion("2.13.13")
-  final val scala300 = ScalaVersion("3.4.1")
+  final val scala300 = ScalaVersion("3.3.1")
 
   object Groups {
     final val fundamentals = Set(Group("fundamentals"))
@@ -193,6 +193,13 @@ object Izumi {
         "scalaJSLinkerConfig" in (SettingScope.Project, Platform.Js) := "{ scalaJSLinkerConfig.value.withBatchMode(true).withModuleKind(ModuleKind.CommonJSModule) }".raw,
       ),
     )
+    private val nativePlatform3 = PlatformEnv(
+      platform = Platform.Native,
+      language = targetScala3,
+      settings = Seq(
+        "coverageEnabled" := false,
+      ),
+    )
 
     private val jvmPlatformSbt = PlatformEnv(
       platform = Platform.Jvm,
@@ -205,15 +212,17 @@ object Izumi {
     final val jvm2 = Seq(jvmPlatform2)
 //    final val js = Seq(jsPlatform2)
 
-    final val cross3 = Seq(jvmPlatform3, jsPlatform3)
+    final val cross3 = Seq(jvmPlatform3, jsPlatform3, nativePlatform3)
     final val jvm3 = Seq(jvmPlatform3)
     final val js3 = Seq(jsPlatform3)
+    final val native3 = Seq(nativePlatform3)
 
     final val jvmSbt = Seq(jvmPlatformSbt)
   }
 
   final val assemblyPluginJvm = Plugin("AssemblyPlugin", Platform.Jvm)
   final val assemblyPluginJs = Plugin("AssemblyPlugin", Platform.Js)
+  final val assemblyPluginNative = Plugin("AssemblyPlugin", Platform.Native)
 
   object Projects {
 
@@ -313,7 +322,7 @@ object Izumi {
           SettingKey(Some(scala300), None) :=
             Seq[Const](
               "-Yretain-trees", // FIXME required
-              "-language:3.4",
+              "-language:3.3",
             ) ++ Defaults.Scala3Options,
           SettingKey.Default := Const.EmptySeq,
         ),
